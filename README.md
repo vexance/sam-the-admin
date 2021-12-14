@@ -13,3 +13,4 @@ f"KRB5CCNAME='<target-user>.ccache' <cmd> -target-ip <dc_ip> -dc-ip <dc_ip> -k -
 #### Check out 
 - [CVE-2021-42287/CVE-2021-42278 Weaponisation ](https://exploit.ph/cve-2021-42287-cve-2021-42278-weaponisation.html)
 - [sAMAccountName spoofing](https://www.thehacker.recipes/ad/movement/kerberos/samaccountname-spoofing)
+- [WazeHell](https://github.com/WazeHell/sam-the-admin) - Original Author
