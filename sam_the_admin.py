@@ -173,9 +173,6 @@ if __name__ == '__main__':
     parser.add_argument('-impersonate', action='store', required=False, help='Account to attempt to impersonate via S4U2Self')
     parser.add_argument('-cmd', action='store', required=True, help='Command to run (e.g., path to impacket binary, /home/username/.local/bin/secretsdump.py) ')
 
-
-
-
     if len(sys.argv)==1:
         parser.print_help()
         sys.exit(1)
