@@ -171,7 +171,7 @@ if __name__ == '__main__':
                                                                       'Useful if you can\'t translate the FQDN.'
                                                                       'specified in the account parameter will be used')
     parser.add_argument('-use-ldaps', action='store_true', help='Use LDAPS instead of LDAP')
-    parser.add_argument('-impersonate', action='store', required='false', help='Account to attempt to impersonate via S4U2Self')
+    parser.add_argument('-impersonate', action='store', required=False, help='Account to attempt to impersonate via S4U2Self')
     parser.add_argument('-export', action='store_true', help='Save resulting ST in a file rather than dumping/popping a shell')
 
 
