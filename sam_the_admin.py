@@ -150,7 +150,7 @@ if __name__ == '__main__':
     parser.add_argument('-domain-netbios', action='store', metavar='NETBIOSNAME', help='Domain NetBIOS name. Required if the DC has multiple domains.')
     parser.add_argument('-debug', action='store_true', help='Turn DEBUG output ON')
     parser.add_argument('-shell', action='store_true', default=False, help='Drop a shell via smbexec')
-    parser.add_argument('-dump', action='store_true', default=False help='Dump Hashs via secretsdump')
+    parser.add_argument('-dump', action='store_true', default=False, help='Dump Hashs via secretsdump')
 
     parser.add_argument('-port', type=int, choices=[139, 445, 636],
                        help='Destination port to connect to. SAMR defaults to 445, LDAPS to 636.')
