@@ -3,7 +3,7 @@ Exploiting CVE-2021-42278 and CVE-2021-42287 to impersonate DA from standard dom
 [![asciicast](https://asciinema.org/a/SnQ66XtmZLzXZQ8QwWwAYs8Dm.svg)](https://asciinema.org/a/SnQ66XtmZLzXZQ8QwWwAYs8Dm)
 
 ### Selecting Command
-This version of the script will execute whatever is specified in the `-cmd` flag with the forged service ticket (default: `echo "No command specified, exiting!" #`). There are certain arguments which are always applied before / after the command, this is shown below for your situational awareness
+This version of the script will execute whatever is specified in the `-cmd` flag with the forged service ticket. There are certain arguments which are always applied before / after the command, this is shown below for your situational awareness
 
 ```
 # Whatever specifed in '-cmd' will replace <cmd>
